@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gcm_defaultSenderId" translatable="false">109327777753</string>
+    <string name="google_api_key" translatable="false">AIzaSyDkyQ9-OH0nguWZJCf0xDZyTxeC9_Qzu0Q</string>
+    <string name="google_app_id" translatable="false">1:109327777753:android:b8cee36778837493fe63c8</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDkyQ9-OH0nguWZJCf0xDZyTxeC9_Qzu0Q</string>
+    <string name="google_storage_bucket" translatable="false">myapppokemon-14bd7.firebasestorage.app</string>
+    <string name="project_id" translatable="false">myapppokemon-14bd7</string>
+</resources>
