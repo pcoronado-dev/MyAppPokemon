@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "109327777753",
+    "project_id": "myapppokemon-14bd7",
+    "storage_bucket": "myapppokemon-14bd7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:109327777753:android:b8cee36778837493fe63c8",
+        "android_client_info": {
+          "package_name": "com.coronado.myapppokemon"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkyQ9-OH0nguWZJCf0xDZyTxeC9_Qzu0Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
