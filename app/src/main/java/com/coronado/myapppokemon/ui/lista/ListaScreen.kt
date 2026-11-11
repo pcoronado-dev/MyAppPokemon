@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -63,12 +64,13 @@ fun ListaScreen(
                 title = { Text("Pokédex") },
                 colors = coloresBarra(),
                 actions = {
-                    IconButton(onClick = { viewModel.refrescar() }) {
-                        Icon(Icons.Filled.Refresh, contentDescription = "Sincronizar")
+                    IconButton(onClick = { viewModel.refrescar() }, modifier = Modifier.heightIn(min = 48.dp)) {
+                        Icon(Icons.Filled.Refresh, contentDescription = "Sincronizar Pokédex")
                     }
                     TextButton(
                         onClick = onCerrarSesion,
-                        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onPrimary)
+                        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onPrimary),
+                        modifier = Modifier.heightIn(min = 48.dp)
                     ) { Text("Salir") }
                 }
             )
@@ -76,7 +78,6 @@ fun ListaScreen(
     ) { padding ->
         Column(Modifier.padding(padding).fillMaxSize()) {
 
-            // Selector de tipo de Pokémon
             LazyRow(
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -90,7 +91,8 @@ fun ListaScreen(
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = color,
                             selectedLabelColor = contenidoSobre(color)
-                        )
+                        ),
+                        modifier = Modifier.heightIn(min = 48.dp)
                     )
                 }
             }
@@ -99,8 +101,16 @@ fun ListaScreen(
                 Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                OutlinedButton(onClick = onFavoritos) { Text("Favoritos") }
-                if (esAdmin) OutlinedButton(onClick = onAdmin) { Text("Panel Admin") }
+                OutlinedButton(
+                    onClick = onFavoritos,
+                    modifier = Modifier.heightIn(min = 48.dp)
+                ) { Text("Favoritos") }
+                if (esAdmin) {
+                    OutlinedButton(
+                        onClick = onAdmin,
+                        modifier = Modifier.heightIn(min = 48.dp)
+                    ) { Text("Panel Admin") }
+                }
             }
 
             aviso?.let {
@@ -121,13 +131,17 @@ fun ListaScreen(
                 is UiState.Error -> ErrorView(e.mensaje, onReintentar = { viewModel.refrescar() })
                 is UiState.Exito -> {
                     if (e.datos.isEmpty()) {
-                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Box(Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("No hay Pokémon guardados")
+                                Text(
+                                    "No hay Pokémon guardados para este tipo",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
                                 Button(
                                     onClick = { viewModel.refrescar() },
-                                    modifier = Modifier.padding(top = 12.dp)
-                                ) { Text("Sincronizar") }
+                                    modifier = Modifier.padding(top = 16.dp).heightIn(min = 48.dp)
+                                ) { Text("Sincronizar ahora") }
                             }
                         }
                     } else {

@@ -2,7 +2,10 @@ package com.coronado.myapppokemon.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -16,17 +19,29 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ErrorView(mensaje: String, onReintentar: () -> Unit, modifier: Modifier = Modifier) {
     Column(
-        modifier.fillMaxSize().padding(24.dp),
+        modifier = modifier.fillMaxSize().padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = mensaje,
-            style = MaterialTheme.typography.bodyLarge,
+            text = "¡Ups! Algo salió mal",
+            style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.error,
+            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
             textAlign = TextAlign.Center
         )
-        Button(onClick = onReintentar, modifier = Modifier.padding(top = 16.dp)) {
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = mensaje,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        Button(
+            onClick = onReintentar,
+            modifier = Modifier.heightIn(min = 48.dp)
+        ) {
             Text("Reintentar")
         }
     }

@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -38,11 +40,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -66,8 +71,8 @@ fun LoginScreen(
     var correo by rememberSaveable { mutableStateOf("") }
     var clave by rememberSaveable { mutableStateOf("") }
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
 
-    // Cuando el ViewModel confirma la sesión, se avisa para navegar
     LaunchedEffect(sesion) {
         val s = sesion
         if (s is UiState.Exito && s.datos != null) onIngreso()
@@ -79,8 +84,8 @@ fun LoginScreen(
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xFFE3F2FD), // Light blue top
-                        Color(0xFFFFFFFF), // White bottom
+                        Color(0xFFE3F2FD),
+                        Color(0xFFFFFFFF),
                         Color(0xFFF5F9FF)
                     )
                 )
@@ -94,12 +99,10 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // Pokébola prominente en la parte superior central
             Pokebola(tamano = 120.dp)
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Título grande en texto rojo "MyAppPokemon"
             Text(
                 text = "MyAppPokemon",
                 style = MaterialTheme.typography.headlineLarge.copy(
@@ -109,7 +112,6 @@ fun LoginScreen(
                 color = Color(0xFFEE1515)
             )
 
-            // Subtítulo
             Text(
                 text = "Ingresa para ver la Pokédex",
                 style = MaterialTheme.typography.bodyLarge,
@@ -117,7 +119,6 @@ fun LoginScreen(
                 modifier = Modifier.padding(bottom = 32.dp, top = 4.dp)
             )
 
-            // Campo de texto superior para "Correo" con icono de sobre y borde brillante cian neón
             OutlinedTextField(
                 value = correo,
                 onValueChange = { correo = it },
@@ -125,12 +126,17 @@ fun LoginScreen(
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Email,
-                        contentDescription = "Icono Correo",
-                        tint = Color(0xFF00BCD4)
+                        contentDescription = "Icono de Correo electrónico"
                     )
                 },
                 singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                ),
                 shape = RoundedCornerShape(16.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color(0xFF00E5FF),
@@ -142,6 +148,7 @@ fun LoginScreen(
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
+                    .heightIn(min = 56.dp)
                     .border(
                         width = 1.5.dp,
                         brush = Brush.horizontalGradient(
@@ -153,7 +160,6 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Campo de texto inferior para "Contraseña" con icono de candado y opción de ocultar/mostrar
             OutlinedTextField(
                 value = clave,
                 onValueChange = { clave = it },
@@ -161,20 +167,28 @@ fun LoginScreen(
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Lock,
-                        contentDescription = "Icono Contraseña",
-                        tint = Color(0xFF546E7A)
+                        contentDescription = "Icono de Contraseña"
                     )
                 },
                 trailingIcon = {
                     val image = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
                     val description = if (passwordVisible) "Ocultar contraseña" else "Mostrar contraseña"
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                        Icon(imageVector = image, contentDescription = description, tint = Color(0xFF78909C))
+                        Icon(imageVector = image, contentDescription = description)
                     }
                 },
                 singleLine = true,
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus()
+                        if (!form.cargando) viewModel.iniciarSesion(correo, clave)
+                    }
+                ),
                 shape = RoundedCornerShape(16.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color(0xFF00E5FF),
@@ -184,7 +198,9 @@ fun LoginScreen(
                     focusedContainerColor = Color.White,
                     unfocusedContainerColor = Color.White
                 ),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 56.dp)
             )
 
             form.mensaje?.let {
@@ -199,13 +215,13 @@ fun LoginScreen(
                 Text(
                     text = it,
                     color = MaterialTheme.colorScheme.error,
+                    fontWeight = FontWeight.Medium,
                     modifier = Modifier.padding(top = 12.dp)
                 )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Botón de acción redondeado en color naranja rojizo brillante con el texto "Ingresar"
             Button(
                 onClick = { viewModel.iniciarSesion(correo, clave) },
                 enabled = !form.cargando,
@@ -215,6 +231,7 @@ fun LoginScreen(
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
+                    .heightIn(min = 48.dp)
                     .height(54.dp)
             ) {
                 if (form.cargando) {
@@ -237,8 +254,11 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Texto inferior "¿No tienes cuenta? Regístrate" con "Regístrate" en azul oscuro y subrayado
-            TextButton(onClick = onIrARegistro, enabled = !form.cargando) {
+            TextButton(
+                onClick = onIrARegistro,
+                enabled = !form.cargando,
+                modifier = Modifier.heightIn(min = 48.dp)
+            ) {
                 Text(
                     text = buildAnnotatedString {
                         append("¿No tienes cuenta? ")
